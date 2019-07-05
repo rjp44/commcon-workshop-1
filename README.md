@@ -10,16 +10,46 @@ export TRUNK_TYPE=Simwood
 export TRUNK_ACCOUNT=XXXXXXXXXXXXX
 export TRUNK_PASSWORD=YYYYYYYYYYYYY
 ```
+Choose passwords and application name for your ARI instance:
+```
+export ARI_APPLICATION=<application name>
+export ARI_USER=<username>
+export ARI_PASSWORD=<password>
+```
+
+
 Start the containers:
 ```
 docker-compose up
 ```
 
+Go to the sample app directory:
+```
+cd sample-app
+```
+
+edit the config file in sample-app, and change the values:
+```
+
+  "asterisk": {
+    "host": "<server_ip_address>",
+    "port": 8080,
+    "application": "<application name>",
+    "username": "<username>",
+    "password": "<password>"
+  },
+  "deepvoice": {
+    "url": "http://<server_internal_ip_address>:9000/synthesize"
+  }
+}
+```
+
 Then run the sample myApp
 ```
-cd myApp
 node index.js
 ```
+
+Place an inbound phone call...
 
 # Development: container details
 
