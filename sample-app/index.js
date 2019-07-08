@@ -4,7 +4,7 @@ const config = require('config');
 
 const url = `http://${config.get('asterisk.host')}:${config.get('asterisk.port')}/ari`;
 
-const appName = 'myApp';
+const appName = config.get('asterisk.application');
 const username = config.get('asterisk.username');
 const password = config.get('asterisk.password');
 const soundurl = config.get('deepvoice.url');
