@@ -28,6 +28,11 @@ Go to the sample app directory:
 cd sample-app
 ```
 
+Start a redis container:
+```
+docker run --name redis -p 6379:6379 -d redis:alpine
+```
+
 Then run the sample myApp
 ```
 node index.js
