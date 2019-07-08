@@ -4,10 +4,13 @@ const config = require('config');
 
 const url = `http://${config.get('asterisk.host')}:${config.get('asterisk.port')}/ari`;
 
-const appName = 'myApp';
+const appName = config.get('asterisk.application');
 const username = config.get('asterisk.username');
 const password = config.get('asterisk.password');
 const soundurl = config.get('deepvoice.url');
+
+const redis = require('redis');
+const redis_client = redis.createClient()
 
 // Channel.play() wants an Object that contains the plaback URL and playback function
 //  convenience function to populate this.
@@ -22,28 +25,36 @@ client.connect(url, username, password)
             var channel = incoming;
             console.log("New channel ", incoming.id);
             channel.answer()
-                .then(() => {
+                .then(async () => {
                     console.log("Answered a call from ", channel.caller.number);
-                    channel.play(msgFormat(`Hello ${channel.caller.number.split('').join(' ')}`, ari))
-                    .then(() => channel.play(msgFormat('Welcome to our application', ari)))
-                    .then(() => channel.play(msgFormat('Type some digits and see what happens', ari)));
+                    await channel.play(msgFormat(`Welcome to the voice based addition calculator.`, ari))
+                    .then(async () => {
+                        channel.play(msgFormat('Please enter the first number. I will wait', ari))
+                        // Bind event post playback
+                        channel.on('ChannelDtmfReceived', (event, channel) => {
+                            let digit = event.digit;
+                            console.log(`User entered ${digit}`)
+                            redis_client.get(`first_number`, async function(err, number) {
+                                if (!number) {
+                                    // This is the first number
+                                    await redis_client.set('first_number', digit)
+                                    channel.play(msgFormat(`The first number is ${digit}. Please enter the second number`, ari))
+                                }
+                                else {
+                                    // This is the second number
+                                    // Add numbers
+                                    await redis_client.del('first_number')
+                                    calc = parseInt(digit) + parseInt(number)
+                                    console.log(`Result is ${calc}`)
+                                    channel.play(msgFormat(`The result is ${calc}`, ari))
+                                    .then(() => {
+                                        channel.hangup()
+                                    })
+                                }
+                            });
+                        });            
+                    })
                 })
-            channel.on('ChannelDtmfReceived', (event, channel) => {
-                var digit = event.digit;
-                console.log('got digit: ', digit);
-                if (digit != '6') {
-                    channel.play(msgFormat('you pressed the digit ' + digit, ari))
-                        .then(() => channel.play(msgFormat('You naughty person', ari)))
-                        .then(() => channel.play(msgFormat('Do not do that again!', ari)));
-                } else {
-                    channel.play(msgFormat('Great you pressed ' + digit, ari))
-                        .then(() => channel.play(msgFormat('That was a cool choice', ari)))
-                        .then(() => channel.play(msgFormat('Good work you win', ari)))
-                        .then(() => channel.play(msgFormat('Nice talking to you Goodbye', ari)))
-                        .then((playback, err) => playback.once('PlaybackFinished', () => channel.hangup()));
-                }
-            });
-
         });
         ari.start(appName);
     })

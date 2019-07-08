@@ -1,12 +1,12 @@
 {
   "asterisk": {
-    "host": "127.0.0.1",
+    "host": "35.246.53.53",
     "port": 8080,
-    "application": "myApp",
+    "application": "Simwood",
     "username": "asterisk",
     "password": "asterisk"
   },
   "deepvoice": {
-    "url": "http://192.168.1.203:9000/synthesize"
+    "url": "http://deepvoice.:9000/synthesize"
   }
 }

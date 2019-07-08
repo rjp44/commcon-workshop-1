@@ -24,6 +24,7 @@
   "homepage": "https://github.com/rjp44/asterisk-ari-sample-app#readme",
   "dependencies": {
     "ari-client": "^2.1.0",
-    "config": "^3.1.0"
+    "config": "^3.1.0",
+    "redis": "^2.8.0"
   }
 }
