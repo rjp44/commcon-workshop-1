@@ -28,20 +28,9 @@ Go to the sample app directory:
 cd sample-app
 ```
 
-edit the config file in sample-app, and change the values:
+Start a redis container:
 ```
-
-  "asterisk": {
-    "host": "<server_ip_address>",
-    "port": 8080,
-    "application": "<application name>",
-    "username": "<username>",
-    "password": "<password>"
-  },
-  "deepvoice": {
-    "url": "http://<server_internal_ip_address>:9000/synthesize"
-  }
-}
+docker run --name redis -p 6379:6379 -d redis:alpine
 ```
 
 Then run the sample myApp
@@ -50,6 +39,10 @@ node index.js
 ```
 
 Place an inbound phone call...
+
+Enter the first number
+
+Enter the second number
 
 # Development: container details
 
